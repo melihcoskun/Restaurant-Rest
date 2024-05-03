@@ -6,14 +6,14 @@ import lombok.Data;
 
 @Entity
 @Data
-public class CartItems {
+public class CartItem {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long price;
+    private double price;
 
     private Long quantity;
 

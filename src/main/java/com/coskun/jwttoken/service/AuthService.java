@@ -69,4 +69,10 @@ public class AuthService {
         return AuthenticationResponse.builder().accessToken(jwtToken).build();
 
     }
+
+    // If registered user is customer then create a card for him/her
+    private void addCartToCustomer() {
+
+
+    }
 }
