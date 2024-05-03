@@ -1,9 +1,12 @@
 package com.coskun.jwttoken.controller;
 
 
+import com.coskun.jwttoken.entity.CartItem;
 import com.coskun.jwttoken.entity.User;
 import com.coskun.jwttoken.payload.CardDto;
 import com.coskun.jwttoken.service.CartService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,17 +24,13 @@ public class CardController {
 
     // Add product to my card and how many?
     @PostMapping("/my-card")
-    public void addProductToCard(Authentication authentication,
-                                 @RequestBody CardDto cardDto) {
-
+    public ResponseEntity<CartItem> addProductToCard(Authentication authentication,
+                                                    @RequestBody CardDto cardDto) {
         Object principal = authentication.getPrincipal();
 
         long id= ((User)principal).getId();
-
-
-
-        cartService.addProductToCart(id,cardDto);
-
+        System.out.println("Line 32 ******");
+        return new ResponseEntity<>(cartService.addProductToCart(id,cardDto), HttpStatus.CREATED);
 
     }
 

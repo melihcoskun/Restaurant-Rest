@@ -1,9 +1,12 @@
 package com.coskun.jwttoken.service;
 
+import com.coskun.jwttoken.entity.Cart;
+import com.coskun.jwttoken.entity.Role;
 import com.coskun.jwttoken.entity.User;
 import com.coskun.jwttoken.payload.AuthenticationRequest;
 import com.coskun.jwttoken.payload.AuthenticationResponse;
 import com.coskun.jwttoken.payload.RegisterRequest;
+import com.coskun.jwttoken.repository.CartRepository;
 import com.coskun.jwttoken.repository.UserRepository;
 import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final CartRepository cartRepository;
 
     public AuthenticationResponse register(RegisterRequest registerRequest){
 
@@ -34,6 +38,9 @@ public class AuthService {
                 .role(registerRequest.getRole())
                 .build();
 
+        if(user.getRole()== Role.CUSTOMER) {
+            addCartToCustomer(user);
+        }
         User savedUser = userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
 
@@ -71,8 +78,11 @@ public class AuthService {
     }
 
     // If registered user is customer then create a card for him/her
-    private void addCartToCustomer() {
-
+    private void addCartToCustomer(User user) {
+        Cart cart = new Cart();
+        cart.setTotalPrice(0);
+        cart.setUser(user);
+        cartRepository.save(cart);
 
     }
 }

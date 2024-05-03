@@ -1,6 +1,7 @@
 package com.coskun.jwttoken.service.impl;
 
 import com.coskun.jwttoken.entity.*;
+import com.coskun.jwttoken.exception.RestaurantAPIException;
 import com.coskun.jwttoken.payload.CardDto;
 import com.coskun.jwttoken.repository.CartItemRepository;
 import com.coskun.jwttoken.repository.CartRepository;
@@ -8,6 +9,7 @@ import com.coskun.jwttoken.repository.ProductRepository;
 import com.coskun.jwttoken.repository.UserRepository;
 import com.coskun.jwttoken.service.CartItemService;
 import com.coskun.jwttoken.service.CartService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,12 +35,63 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartItem addProductToCart(long userId, CardDto cardDto) {
 
+        Product product = productRepository.findById(cardDto.getProductId()).orElseThrow(
+                () -> new RuntimeException("Resource not found"));
+
+        Cart cart = cartRepository.findByUser_id(userId);
+
+        List<CartItem> cartItems = cartItemRepository.findByCart_id(cart.getId());
+
+        if(cartItems.isEmpty()) { // cart Boşsa ekle
+
+            CartItem cartItem = cartItemService.createCartItem(cardDto);
+            cart.setTotalPrice(cart.getTotalPrice()+cartItem.getPrice());
+            cartRepository.save(cart);
+            cartItem.setCart(cart);
+            return cartItemRepository.save(cartItem);
+
+
+        } else {
+
+            long currentRestaurantId = cartItems.get(0).getProduct().getCategory().getRestaurant().getId();
+            long wantedRestaurantId = product.getCategory().getRestaurant().getId();
+
+            if(currentRestaurantId == wantedRestaurantId){  // aynı restaurantsa
+                Optional<CartItem> cartItemExist = cartItemRepository.findByCart_idAndProduct_id(cart.getId(), product.getId());
+                if(cartItemExist.isEmpty()) { // Burda o product id var mı diye bakıcaz şimdi.
+                    // burda ekle
+
+                    CartItem cartItem = cartItemService.createCartItem(cardDto);
+                    cart.setTotalPrice(cart.getTotalPrice()+cartItem.getPrice());
+                    cartRepository.save(cart);
+                    cartItem.setCart(cart);
+                    return cartItemRepository.save(cartItem);
+
+                } else {
+                    // Burda ekleyemezsin.
+                    throw new RestaurantAPIException(HttpStatus.BAD_REQUEST,
+                            "The product you are trying to add to card, is already exist in the card.");
+                }
+
+
+            } else {
+
+                throw new RestaurantAPIException(HttpStatus.BAD_REQUEST,
+                        "You are trying to add product from different restaurant");
+            }
+
+        }
+    }
+    /*
+    @Override
+    public CartItem addProductToCart(long userId, CardDto cardDto) {
+
         User user = userRepository.findById((int) userId).orElseThrow(
                 () -> new RuntimeException("Resource not found"));
         Product product = productRepository.findById(cardDto.getProductId()).orElseThrow(
                 () -> new RuntimeException("Resource not found"));
 
-        Optional<Cart> cart = cartRepository.findByUser_id(userId);
+        Cart cart = cartRepository.findByUser_id(userId);
         if(cart.isEmpty()) { // Cart yoksa
 
             // Yeni bir card yarat ve usera ekle
@@ -84,6 +137,6 @@ public class CartServiceImpl implements CartService {
 
 
 
-    }
+    } */
 
 }
