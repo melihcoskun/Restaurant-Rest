@@ -125,6 +125,18 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    @Override
+    public CardDto editItemInCard(long userId, long itemId, CardDto cardDto) {
+        Cart cart = cartRepository.findByUser_id(userId);
+        CartItem cartItem = cartItemRepository.findByCart_idAndProduct_id(cart.getId(), itemId).orElseThrow(
+                () ->     new ResourceNotFoundException("item" , "id" ,itemId)
+        );
+        double productPrice = cartItem.getPrice()/cartItem.getQuantity();
+        cartItem.setQuantity(cardDto.getQuantity());
+        cartItem.setPrice(cardDto.getQuantity()*productPrice);
+        return mapToCardDto(cartItemRepository.save(cartItem));
+    }
+
 
     /*
     @Override

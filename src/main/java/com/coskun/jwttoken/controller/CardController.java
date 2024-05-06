@@ -55,6 +55,17 @@ public class CardController {
         return ResponseEntity.ok("Item deleted succesfully");
     }
 
+    @PutMapping("/my-card/{itemId}")
+    public ResponseEntity<CardDto> editItem(Authentication authentication,
+                                            @PathVariable long itemId,
+                                            @RequestBody CardDto cardDto) {
+
+        Object principal = authentication.getPrincipal();
+        long id= ((User)principal).getId();
+        return new ResponseEntity<>(cartService.editItemInCard(id,itemId,cardDto), HttpStatus.OK);
+
+    }
+
 
 
 }

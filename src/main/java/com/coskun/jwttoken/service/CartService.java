@@ -15,4 +15,6 @@ public interface CartService {
     CardResponse getItemsInCard(long userId);
 
     void removeItemFromCard(long userId, long itemId);
+
+    CardDto editItemInCard(long userId, long itemId, CardDto cardDto);
 }
