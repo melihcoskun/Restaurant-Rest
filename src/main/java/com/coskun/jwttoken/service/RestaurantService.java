@@ -8,4 +8,5 @@ public interface RestaurantService {
 
     RestaurantDto getRestaurant(long id);
 
+    void deleteRestaurant(long restaurantId);
 }

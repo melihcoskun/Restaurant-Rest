@@ -3,6 +3,7 @@ package com.coskun.jwttoken.service.impl;
 import com.coskun.jwttoken.entity.Restaurant;
 import com.coskun.jwttoken.entity.Role;
 import com.coskun.jwttoken.entity.User;
+import com.coskun.jwttoken.exception.ResourceNotFoundException;
 import com.coskun.jwttoken.payload.RestaurantDto;
 import com.coskun.jwttoken.repository.RestaurantRepository;
 import com.coskun.jwttoken.repository.UserRepository;
@@ -55,6 +56,14 @@ public class RestaurantServiceImpl implements RestaurantService {
                 () -> new RuntimeException("Resource not found")); */
 
         return mapToDTO(restaurant);
+    }
+
+    @Override
+    public void deleteRestaurant(long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant", "id", restaurantId));
+
+        restaurantRepository.delete(restaurant);
     }
 
     private RestaurantDto mapToDTO(Restaurant restaurant){

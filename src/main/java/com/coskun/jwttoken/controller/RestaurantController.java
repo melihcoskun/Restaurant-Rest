@@ -3,13 +3,12 @@ package com.coskun.jwttoken.controller;
 import com.coskun.jwttoken.entity.User;
 import com.coskun.jwttoken.payload.RestaurantDto;
 import com.coskun.jwttoken.service.RestaurantService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.web.oauth2.client.OAuth2ClientSecurityMarker;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class RestaurantController {
@@ -39,6 +38,14 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto restaurantDto) {
 
         return new ResponseEntity<RestaurantDto>(restaurantService.saveRestaurant(restaurantDto), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/restaurants/{restaurantId}")
+    public ResponseEntity<String> deleteRestaurant(@PathVariable long restaurantId) {
+
+
+        restaurantService.deleteRestaurant(restaurantId);
+        return ResponseEntity.ok("Restaurant deleted succesfully.");
     }
 
 
