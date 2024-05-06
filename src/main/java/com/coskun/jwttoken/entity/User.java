@@ -1,10 +1,7 @@
 package com.coskun.jwttoken.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +11,9 @@ import java.util.List;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,8 +29,9 @@ public class User implements UserDetails {
     private String password;
 
 
-   // @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-//    private Restaurant restaurant;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Restaurant restaurant;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -65,4 +65,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

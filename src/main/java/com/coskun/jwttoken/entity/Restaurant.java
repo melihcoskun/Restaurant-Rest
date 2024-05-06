@@ -2,16 +2,17 @@ package com.coskun.jwttoken.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
+@ToString
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class Restaurant {
@@ -25,12 +26,18 @@ public class Restaurant {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
     @OneToMany(
             mappedBy = "restaurant", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL, orphanRemoval = true
     )
-    private Set<Category> categories;
+    @ToString.Exclude
+    private Set<Category> categories = new HashSet<>();
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
+    }
 
 }

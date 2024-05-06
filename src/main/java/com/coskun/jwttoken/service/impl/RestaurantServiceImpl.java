@@ -39,7 +39,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .password(passwordEncoder.encode("mmogluk57"))
                 .role(Role.ADMIN)
                 .build();
-
+            user.setRestaurant(restaurant);
             userRepository.save(user);
             restaurant.setUser(user);
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
@@ -49,8 +49,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantDto getRestaurant(long id) {
-        Restaurant restaurant = restaurantRepository.findByUser_id(id).orElseThrow(
-                () -> new RuntimeException("Resource not found"));
+
+        Restaurant restaurant = userRepository.findById((int)id).get().getRestaurant();
+      /*   Restaurant restaurant = restaurantRepository.findByUser_id(id).orElseThrow(
+                () -> new RuntimeException("Resource not found")); */
 
         return mapToDTO(restaurant);
     }

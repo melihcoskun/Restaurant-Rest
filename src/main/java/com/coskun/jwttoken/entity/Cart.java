@@ -2,14 +2,15 @@ package com.coskun.jwttoken.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -26,14 +27,20 @@ public class Cart {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
- /*    @OneToMany(
+     @OneToMany(
             mappedBy = "cart", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL, orphanRemoval = true
+             orphanRemoval = true
     )
-    private List<CartItem> cartItems; * /
+     @ToString.Exclude
+     private List<CartItem> cartItems = new ArrayList<>();
 
-  */
+     public void addCartItem(CartItem cartItem) {
+         cartItems.add(cartItem);
+     }
+
+
 
 }

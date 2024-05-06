@@ -7,10 +7,7 @@ import com.coskun.jwttoken.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,6 +33,8 @@ public class CategoryController {
 
     }
 
+
+    // This is for restaurant owner
     @GetMapping("restaurants/myRestaurant/categories")
     public ResponseEntity<List<CategoryDto>> getCategories(
             Authentication authentication) {
@@ -45,6 +44,21 @@ public class CategoryController {
         long id= ((User)principal).getId();
 
        return ResponseEntity.ok(categoryService.getAllCategories(id));
+
+    }
+
+
+    @DeleteMapping("/restaurants/myRestaurant/categories/{categoryId}")
+    public ResponseEntity<String> deleteCategory(@PathVariable long categoryId,
+                                                 Authentication authentication) {
+
+        Object principal = authentication.getPrincipal();
+
+        long id= ((User)principal).getId();
+
+        categoryService.deleteCategory(id,categoryId);
+
+        return ResponseEntity.ok("Category deleted succesfully");
 
     }
 

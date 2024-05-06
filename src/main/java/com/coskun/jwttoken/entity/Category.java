@@ -1,13 +1,14 @@
 package com.coskun.jwttoken.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,12 +22,14 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
+    @ToString.Exclude
     private Restaurant restaurant;
 
     @OneToMany(
             mappedBy = "category", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL, orphanRemoval = true
+            cascade = CascadeType.REMOVE, orphanRemoval = true
     )
+    @ToString.Exclude
     private Set<Product> products;
 
 
