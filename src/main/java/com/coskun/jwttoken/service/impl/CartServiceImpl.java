@@ -1,6 +1,7 @@
 package com.coskun.jwttoken.service.impl;
 
 import com.coskun.jwttoken.entity.*;
+import com.coskun.jwttoken.exception.CartItemNotFoundException;
 import com.coskun.jwttoken.exception.ResourceNotFoundException;
 import com.coskun.jwttoken.exception.RestaurantAPIException;
 import com.coskun.jwttoken.payload.CardDto;
@@ -14,6 +15,7 @@ import com.coskun.jwttoken.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,10 +61,13 @@ public class CartServiceImpl implements CartService {
             cart.addCartItem(cartItem);
 
             cartRepository.save(cart);
-            CartItem savedCartItem = cartItemRepository.save(cartItem);
+            //CartItem savedCartItem = cartItemRepository.save(cartItem);
+            int size = cart.getCartItems().size();
+            CartItem item = cartItemRepository.findById(cart.getCartItems().get(size-1).getId()).orElseThrow(
+                    () -> new ResourceNotFoundException("cart","id",0)
+            );
 
-
-            return mapToCardDto(savedCartItem);
+            return mapToCardDto(item);
 
 
         } else {
@@ -135,6 +140,27 @@ public class CartServiceImpl implements CartService {
         cartItem.setQuantity(cardDto.getQuantity());
         cartItem.setPrice(cardDto.getQuantity()*productPrice);
         return mapToCardDto(cartItemRepository.save(cartItem));
+    }
+
+    @Override
+    public void clearCard(long userId) {
+
+        Cart cart = cartRepository.findByUser_id(userId);
+
+        List<CartItem> cartItems = cart.getCartItems();
+        if(cartItems.isEmpty()) {
+            throw new CartItemNotFoundException(HttpStatus.BAD_REQUEST,"Card already empty");
+        }
+
+         /* cartItems
+                .forEach(cartItemRepository::delete); */
+
+        cart.getCartItems().clear();
+        cart.setTotalPrice(0.0);
+        cartRepository.save(cart);
+
+
+
     }
 
 

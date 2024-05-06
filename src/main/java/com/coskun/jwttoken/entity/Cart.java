@@ -32,7 +32,7 @@ public class Cart {
 
      @OneToMany(
             mappedBy = "cart", fetch = FetchType.LAZY,
-             orphanRemoval = true
+             cascade = CascadeType.ALL,orphanRemoval = true
     )
      @ToString.Exclude
      private List<CartItem> cartItems = new ArrayList<>();

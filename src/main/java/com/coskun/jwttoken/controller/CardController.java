@@ -62,8 +62,19 @@ public class CardController {
 
         Object principal = authentication.getPrincipal();
         long id= ((User)principal).getId();
-        return new ResponseEntity<>(cartService.editItemInCard(id,itemId,cardDto), HttpStatus.OK);
+        CardDto cardDto1 =cartService.editItemInCard(id,itemId,cardDto);
+        return new ResponseEntity<>(cardDto1, HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/my-card/clear")
+    public ResponseEntity<String> clearCard(Authentication authentication){
+
+        Object principal = authentication.getPrincipal();
+        long id= ((User)principal).getId();
+        cartService.clearCard(id);
+
+        return ResponseEntity.ok("Cart cleared succesfullly");
     }
 
 

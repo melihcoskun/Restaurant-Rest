@@ -17,4 +17,6 @@ public interface CartService {
     void removeItemFromCard(long userId, long itemId);
 
     CardDto editItemInCard(long userId, long itemId, CardDto cardDto);
+
+    void clearCard(long id);
 }
