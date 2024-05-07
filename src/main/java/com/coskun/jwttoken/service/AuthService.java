@@ -35,7 +35,7 @@ public class AuthService {
                 .lastName(registerRequest.getLastName())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
+                .role(Role.CUSTOMER)
                 .build();
 
         if(user.getRole()== Role.CUSTOMER) {
