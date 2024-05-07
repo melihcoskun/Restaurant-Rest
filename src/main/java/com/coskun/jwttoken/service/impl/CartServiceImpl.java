@@ -116,6 +116,7 @@ public class CartServiceImpl implements CartService {
         List<CardDto> content =  cartItems.stream().map(this::mapToCardDto).collect(Collectors.toList());
         cardResponse.setCardDtoList(content);
         double sum = content.stream().mapToDouble(CardDto::getTotalPrice).sum();
+
         cardResponse.setTotal(sum);
         return cardResponse;
     }
@@ -126,6 +127,7 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepository.findByCart_idAndProduct_id(cart.getId(), itemId).orElseThrow(
                 () ->     new ResourceNotFoundException("item" , "id" ,itemId)
         );
+        cart.setTotalPrice(cart.getTotalPrice()-cartItem.getPrice());
         cartItemRepository.delete(cartItem);
 
     }
