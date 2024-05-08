@@ -5,10 +5,7 @@ import com.coskun.jwttoken.exception.CartIsEmptyException;
 import com.coskun.jwttoken.exception.ResourceNotFoundException;
 import com.coskun.jwttoken.payload.OrderDto;
 import com.coskun.jwttoken.payload.OrderItemDto;
-import com.coskun.jwttoken.repository.CartItemRepository;
-import com.coskun.jwttoken.repository.CartRepository;
-import com.coskun.jwttoken.repository.OrderRepository;
-import com.coskun.jwttoken.repository.UserRepository;
+import com.coskun.jwttoken.repository.*;
 import com.coskun.jwttoken.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,13 +23,15 @@ public class OrderServiceImpl implements OrderService {
     private CartItemRepository cartItemRepository;
     private UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private  RestaurantRepository restaurantRepository;
 
 
-    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, CartItemRepository cartItemRepository, CartRepository cartRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, CartItemRepository cartItemRepository, CartRepository cartRepository,RestaurantRepository restaurantRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @Override
@@ -49,6 +48,11 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = new Order();
         double total=0;
+        long currentRestaurantId = cartItems.get(0).getProduct().getCategory().getRestaurant().getId();
+        Restaurant restaurant = restaurantRepository.findById(currentRestaurantId).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant","id",currentRestaurantId)
+        );
+        order.setRestaurant(restaurant);
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem ci : cartItems) {
             total += ci.getPrice();
@@ -71,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
 
         return mapToOrderDto(savedOrder);
     }
-
+    // Get the customers orders
     @Override
     public List<OrderDto> getOrders(long userId) {
 
@@ -81,6 +85,22 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findByCustomer_id(user.getId());
         return orders.stream().map(this::mapToOrderDto).collect(Collectors.toList());
     }
+
+    @Override
+    // Get the restaurant orderrs    // Here is the user id is the id of the restaurant admin
+    public List<OrderDto> getAllOrders(long userId) {
+        Restaurant restaurant = restaurantRepository.findByUser_id(userId).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant","id",userId)
+        );
+
+        List<Order> orders = orderRepository.findByRestaurant_id(restaurant.getId());
+        return orders.stream().map(this::mapToOrderDto).collect(Collectors.toList());
+
+
+    }
+
+
+
 
     private OrderItem mapToOrderItem(CartItem cartItem) {
 

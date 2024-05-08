@@ -42,4 +42,16 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrders(id));
     }
 
+    // For Restaurant Admin
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDto>> getRestaurantsOrders(Authentication authentication) {
+
+        Object principal = authentication.getPrincipal();
+        long id= ((User)principal).getId();
+
+        return ResponseEntity.ok(
+                orderService.getAllOrders(id));
+
+    }
+
 }

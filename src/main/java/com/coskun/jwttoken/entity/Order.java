@@ -31,6 +31,11 @@ public class Order {
     @ToString.Exclude
     private User customer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    @ToString.Exclude
+    private Restaurant restaurant;
+
 
     @OneToMany(
             mappedBy = "order", fetch = FetchType.LAZY,

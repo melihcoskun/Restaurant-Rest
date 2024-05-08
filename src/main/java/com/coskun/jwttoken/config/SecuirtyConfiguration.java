@@ -41,6 +41,7 @@ public class SecuirtyConfiguration {
                                 .requestMatchers("/restaurants/myRestaurant").hasAnyRole(CUSTOMER.name())
                                 .requestMatchers("/order/place").hasAnyRole("CUSTOMER")
                                 .requestMatchers("/my-orders").hasAnyRole("CUSTOMER")
+                                .requestMatchers("/orders").hasAnyRole("ADMIN")
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
