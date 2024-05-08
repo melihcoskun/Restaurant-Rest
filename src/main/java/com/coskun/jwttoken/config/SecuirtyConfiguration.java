@@ -1,5 +1,6 @@
 package com.coskun.jwttoken.config;
 
+import com.coskun.jwttoken.service.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,19 +30,15 @@ public class SecuirtyConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/crackit/v1/auth/*")
+                        req.requestMatchers("/auth/*")
                                 .permitAll()
-                                .requestMatchers("/error").permitAll()
-                                .requestMatchers("/crackit/v1/management/**").hasAnyRole(ADMIN.name(), MEMBER.name(), CUSTOMER.name())
-                                .requestMatchers("/halabeni").hasAnyRole(ADMIN.name(),SUPERADMIN.name())
-                                .requestMatchers("/restaurants/**").hasAnyRole(ADMIN.name(),SUPERADMIN.name())
-                                .requestMatchers("/restaurants/myRestaurant/categories").hasAnyRole(ADMIN.name(),SUPERADMIN.name())
-                                .requestMatchers("/myRestaurant/categories/{categoryId}/products").hasAnyRole(ADMIN.name(),SUPERADMIN.name())
-                                .requestMatchers("/my-card").hasAnyRole(CUSTOMER.name())
-                                .requestMatchers("/restaurants/myRestaurant").hasAnyRole(CUSTOMER.name())
-                                .requestMatchers("/order/place").hasAnyRole("CUSTOMER")
-                                .requestMatchers("/my-orders").hasAnyRole("CUSTOMER")
-                                .requestMatchers("/orders").hasAnyRole("ADMIN")
+                                .requestMatchers("/error")
+                                .permitAll()
+
+                                .requestMatchers("/restaurants/**").hasAnyRole(SUPERADMIN.name(), ADMIN.name())
+                                .requestMatchers("/my-card/**").hasAnyRole(CUSTOMER.name())
+
+                                .requestMatchers("/my-orders/**").hasAnyRole(CUSTOMER.name())
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

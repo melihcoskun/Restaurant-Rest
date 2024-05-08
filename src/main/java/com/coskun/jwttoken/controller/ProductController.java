@@ -6,12 +6,15 @@ import com.coskun.jwttoken.payload.ProductDto;
 import com.coskun.jwttoken.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/restaurants/my-restaurant/categories")
+
 public class ProductController {
 
     private ProductService productService;
@@ -21,7 +24,8 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping("/myRestaurant/categories/{categoryId}/products")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{categoryId}/products")
     public ResponseEntity<ProductDto> createProduct(@PathVariable long categoryId,
                                                     @RequestBody ProductDto productDto,
                                                     Authentication authentication) {
@@ -33,7 +37,8 @@ public class ProductController {
         return new ResponseEntity<>(productService.createProduct(id,categoryId,productDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/myRestaurant/categories/{categoryId}/products")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{categoryId}/products")
     public ResponseEntity<List<ProductDto>> getProducts(@PathVariable long categoryId,
                                                         Authentication authentication) {
 
@@ -45,7 +50,8 @@ public class ProductController {
 
     }
 
-    @DeleteMapping("/myRestaurant/categories/{categoryId}/products/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{categoryId}/products/{productId}")
     public ResponseEntity<String> removeProductFromRestaurant(@PathVariable long categoryId,
                                                         @PathVariable long productId,
                                                         Authentication authentication) {
@@ -59,7 +65,8 @@ public class ProductController {
 
     }
 
-    @PutMapping("/myRestaurant/categories/{categoryId}/products/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{categoryId}/products/{productId}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable long categoryId,
                                                     @PathVariable long productId,
                                                     Authentication authentication,

@@ -6,12 +6,14 @@ import com.coskun.jwttoken.payload.CategoryDto;
 import com.coskun.jwttoken.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/restaurants")
 public class CategoryController {
 
     private CategoryService categoryService;
@@ -20,7 +22,8 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("restaurants/myRestaurant/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/my-restaurant/categories")
     public ResponseEntity<CategoryDto> createCategory(
             @RequestBody CategoryDto categoryDto,
             Authentication authentication) {
@@ -35,7 +38,8 @@ public class CategoryController {
 
 
     // This is for restaurant owner
-    @GetMapping("restaurants/myRestaurant/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/my-restaurant/categories")
     public ResponseEntity<List<CategoryDto>> getCategories(
             Authentication authentication) {
 
@@ -47,8 +51,8 @@ public class CategoryController {
 
     }
 
-
-    @DeleteMapping("/restaurants/myRestaurant/categories/{categoryId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/my-restaurant/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable long categoryId,
                                                  Authentication authentication) {
 
